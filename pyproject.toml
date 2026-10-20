@@ -7,7 +7,22 @@ authors = [
     { name = "jerymy-k", email = "karimimoha0@gmail.com" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi>=0.156.1",
+    "mlflow>=3.17.1",
+    "opencv-python>=5.0.0.93",
+    "pillow>=12.3.0",
+    "python-multipart>=0.0.32",
+    "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+    "scikit-learn>=1.9.1",
+    "seaborn>=0.13.2",
+    "streamlit>=1.66.0",
+    "tensorflow>=2.21.0",
+    "tensorflow-hub>=0.16.1",
+    "ultralytics>=8.4.183",
+    "uvicorn>=0.54.0",
+]
 
 [project.scripts]
 diagnosticmultimodal = "diagnosticmultimodal:main"
