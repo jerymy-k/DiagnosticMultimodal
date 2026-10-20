@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+data/
+BRIEF_EXPLAINED.md
+mlruns/
+runs/
+models/*.keras
+*.pt 
