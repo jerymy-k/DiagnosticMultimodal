@@ -14,3 +14,6 @@
 - Python 3.11, TensorFlow 2.21 (Keras 3) avec `tensorflow[and-cuda]`
 - GPU NVIDIA en mode Hybrid (`supergfxctl -m Hybrid`). En mode Vfio, le GPU est réservé aux VM et inutilisable pour l'entraînement.
 - `src/utils/gpu.py` : précharge `libcusolver` (bug de packaging TF 2.21) et active l'allocation mémoire progressive du GPU
+
+
+
