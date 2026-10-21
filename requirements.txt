@@ -1797,7 +1797,6 @@ numpy==2.4.6 ; python_full_version < '3.12' \
     #   skops
     #   streamlit
     #   tensorflow
-    #   tensorflow-hub
     #   torchvision
     #   ultralytics
     #   ultralytics-thop
@@ -1884,7 +1883,6 @@ numpy==2.5.4 ; python_full_version >= '3.12' \
     #   skops
     #   streamlit
     #   tensorflow
-    #   tensorflow-hub
     #   torchvision
     #   ultralytics
     #   ultralytics-thop
@@ -2518,7 +2516,6 @@ protobuf==7.36.2 \
     #   opentelemetry-proto
     #   streamlit
     #   tensorflow
-    #   tensorflow-hub
 psutil==7.2.2 \
     --hash=sha256:0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372 \
     --hash=sha256:076a2d2f923fd4821644f5ba89f059523da90dc9014e85f8e45a5774ca5bc6f9 \
@@ -3238,7 +3235,6 @@ setuptools==80.10.2 \
     --hash=sha256:8b0e9d10c784bf7d262c4e5ec5d4ec94127ce206e8738f29a437945fbc219b70 \
     --hash=sha256:95b30ddfb717250edb492926c92b5221f7ef3fbcc2b07579bcd4a27da21d0173
     # via
-    #   diagnosticmultimodal
     #   tensorflow
     #   torch
 six==1.17.0 \
@@ -3369,20 +3365,11 @@ tensorflow==2.21.0 \
     --hash=sha256:b07d15737406533898e36c7ef7944b1be18e9028dc521b9229952c537bbc5552 \
     --hash=sha256:b3b95643c4e70eb925839938fb35cbe142f317ec84af6844ee61513713bb13c0 \
     --hash=sha256:e9d8da8dcab9650efb45f032ba70af2f016f907e6e0c6bda29dd101bba945406
-    # via
-    #   diagnosticmultimodal
-    #   tf-keras
-tensorflow-hub==0.16.1 \
-    --hash=sha256:e10c184b3d08daeafada11ffea2dd46781725b6bef01fad1f74d6634ad05311f
     # via diagnosticmultimodal
 termcolor==3.3.0 \
     --hash=sha256:348871ca648ec6a9a983a13ab626c0acce02f515b9e1983332b17af7979521c5 \
     --hash=sha256:cf642efadaf0a8ebbbf4bc7a31cec2f9b5f21a9f726f4ccbb08192c9c26f43a5
     # via tensorflow
-tf-keras==2.21.0 \
-    --hash=sha256:f858bf3d97f892304e7fbcf5eb0942ed91674e27204f940a85de8c93cf07fe62 \
-    --hash=sha256:f9af0f2546cd5532de0fae7a481f34a1ca2253737d4cd1000f6b713dc733f770
-    # via tensorflow-hub
 threadpoolctl==3.7.0 \
     --hash=sha256:61348cfb77d53b9242e0017029244b559b810c142ced65b4e21eeca1843959a7 \
     --hash=sha256:cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be

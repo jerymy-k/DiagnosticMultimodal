@@ -4,14 +4,12 @@
 
     from utils.gpu import setup_gpu
     setup_gpu()
-    import tensorflow as tf
 """
 
 import ctypes
 import logging
 import os
 import site
-import warnings
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -30,12 +28,9 @@ def _preload_cuda_libs() -> None:
 
 
 def setup_gpu(quiet: bool = True) -> list:
-    """Configure l'environnement TF et retourne la liste des GPU visibles."""
-    # Keras 2 (tf-keras) : requis par les modèles TensorFlow Hub (GoogLeNet)
-    os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
+    """Configure TensorFlow et retourne la liste des GPU visibles."""
     if quiet:
         os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
-        warnings.filterwarnings("ignore", message="pkg_resources is deprecated")
 
     _preload_cuda_libs()
 
