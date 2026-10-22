@@ -221,6 +221,7 @@ __marimo__/
 
 
 data/
+processed/
 BRIEF_EXPLAINED.md
 mlruns/
 runs/
