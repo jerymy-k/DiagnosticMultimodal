@@ -1,0 +1,21 @@
+{
+  "class_names": [
+    "Glioma",
+    "Meningioma",
+    "No Tumor",
+    "Pituitary"
+  ],
+  "img_size": [
+    299,
+    299
+  ],
+  "input": "RGB, pixels bruts 0-255 (normalisation incluse dans le modèle)",
+  "config": "fine_tuning_mixed8",
+  "mlflow_run_id": "a463fa23575d4193a354f65751f24cf3",
+  "test_metrics": {
+    "test_accuracy": 0.9619,
+    "test_precision_macro": 0.9591,
+    "test_recall_macro": 0.9641,
+    "test_f1_macro": 0.9614
+  }
+}
