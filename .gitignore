@@ -224,6 +224,7 @@ data/
 processed/
 BRIEF_EXPLAINED.md
 mlruns/
+mlflow.db
 runs/
 models/*.keras
 *.pt 
