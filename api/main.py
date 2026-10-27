@@ -1,10 +1,11 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, File, Request, UploadFile
+from PIL import Image
 
 from api.config import CLASSIFIER_META_PATH, CLASSIFIER_PATH, DETECTOR_META_PATH, DETECTOR_PATH
-from api.schemas import HealthResponse
+from api.schemas import ClassificationResponse, HealthResponse
 from api.services.classifier import Classifier
 from api.services.detector import Detector
 
@@ -38,3 +39,15 @@ app = FastAPI(title="Diagnostic Multimodal API", lifespan=lifespan)
 def health(request: Request):
     models_loaded = {name: model is not None for name, model in request.app.state.models.items()}
     return HealthResponse(status="ok" if all(models_loaded.values()) else "degraded", models_loaded=models_loaded)
+
+
+@app.post("/predict/classification", response_model=ClassificationResponse)
+def predict_classification(request: Request, file: UploadFile = File(...)):
+    image = Image.open(file.file)
+    probabilities = request.app.state.models["classifier"].predict(image)
+    predicted_class = max(probabilities, key=probabilities.get)
+    return ClassificationResponse(
+        predicted_class=predicted_class,
+        confidence=probabilities[predicted_class],
+        probabilities=probabilities,
+    )
