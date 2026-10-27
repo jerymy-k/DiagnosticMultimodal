@@ -1,0 +1,10 @@
+path: /home/kerymy/Study-DevAI/DiagnosticMultimodal/processed/yolo
+train: images/train
+val: images/valid
+test: images/test
+nc: 4
+names:
+- Glioma
+- Meningioma
+- No Tumor
+- Pituitary
