@@ -7,6 +7,7 @@
 """
 
 import ctypes
+import importlib.util
 import logging
 import os
 import site
@@ -27,11 +28,17 @@ def _preload_cuda_libs() -> None:
                 ctypes.CDLL(str(lib), mode=ctypes.RTLD_GLOBAL)
 
 
+def _preload_triton() -> None:
+    if importlib.util.find_spec("triton") is not None:
+        importlib.import_module("triton")
+
+
 def setup_gpu(quiet: bool = True) -> list:
     """Configure TensorFlow et retourne la liste des GPU visibles."""
     if quiet:
         os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
 
+    _preload_triton()
     _preload_cuda_libs()
 
     import tensorflow as tf

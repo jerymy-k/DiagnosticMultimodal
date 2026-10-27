@@ -14,6 +14,8 @@
 - Python 3.11, TensorFlow 2.21 (Keras 3) avec `tensorflow[and-cuda]`
 - GPU NVIDIA en mode Hybrid (`supergfxctl -m Hybrid`). En mode Vfio, le GPU est réservé aux VM et inutilisable pour l'entraînement.
 - `src/utils/gpu.py` : précharge `libcusolver` (bug de packaging TF 2.21) et active l'allocation mémoire progressive du GPU
+- `setup_gpu()` charge aussi Triton (utilisé par PyTorch) **avant** TensorFlow : dans un même processus, charger Triton après TensorFlow provoque un conflit de symboles LLVM et un crash (`free(): invalid pointer`).
+- L'API tourne sur **CPU** (`CUDA_VISIBLE_DEVICES=-1` dans `api/config.py`) : TensorFlow (CUDA 12) et PyTorch (CUDA 13) ne peuvent pas partager le GPU dans le même processus. Le temps d'inférence reste d'environ 0.2 s par image, et c'est la même configuration que dans Docker.
 
 
 

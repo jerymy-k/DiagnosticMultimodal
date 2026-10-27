@@ -21,3 +21,26 @@ class ClassificationResponse(BaseModel):
     predicted_class: str = Field(alias="class")
     confidence: float
     probabilities: dict[str, float]
+
+
+class Detection(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    detected_class: str = Field(alias="class")
+    confidence: float
+    bbox: list[float] = Field(min_length=4, max_length=4)
+
+
+class DetectionResponse(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [{
+                "detections": [{"class": "Glioma", "confidence": 0.91, "bbox": [120.5, 98.0, 210.3, 176.8]}],
+                "count": 1,
+            }]
+        },
+    )
+
+    detections: list[Detection]
+    count: int
+    annotated_image: str | None = None

@@ -1,11 +1,18 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, File, Request, UploadFile
+from fastapi import FastAPI, File, Query, Request, UploadFile
 from PIL import Image
 
-from api.config import CLASSIFIER_META_PATH, CLASSIFIER_PATH, DETECTOR_META_PATH, DETECTOR_PATH
-from api.schemas import ClassificationResponse, HealthResponse
+from api.config import (
+    CLASSIFIER_META_PATH,
+    CLASSIFIER_PATH,
+    DETECTION_CONF,
+    DETECTION_IOU,
+    DETECTOR_META_PATH,
+    DETECTOR_PATH,
+)
+from api.schemas import ClassificationResponse, DetectionResponse, HealthResponse
 from api.services.classifier import Classifier
 from api.services.detector import Detector
 
@@ -50,4 +57,21 @@ def predict_classification(request: Request, file: UploadFile = File(...)):
         predicted_class=predicted_class,
         confidence=probabilities[predicted_class],
         probabilities=probabilities,
+    )
+
+
+@app.post("/predict/detection", response_model=DetectionResponse, response_model_exclude_none=True)
+def predict_detection(
+    request: Request,
+    file: UploadFile = File(...),
+    conf: float = Query(DETECTION_CONF, ge=0, le=1),
+    iou: float = Query(DETECTION_IOU, ge=0, le=1),
+    annotated: bool = Query(False),
+):
+    detector = request.app.state.models["detector"]
+    detections, result = detector.predict(Image.open(file.file), conf, iou)
+    return DetectionResponse(
+        detections=detections,
+        count=len(detections),
+        annotated_image=detector.annotate(result) if annotated else None,
     )
