@@ -1,5 +1,6 @@
 import os
 
+import pandas as pd
 import requests
 import streamlit as st
 from PIL import Image
@@ -17,6 +18,21 @@ def api_health():
         return response.json()
     except requests.RequestException:
         return None
+
+
+def call_api(endpoint, file, params=None):
+    files = {"file": (file.name, file.getvalue(), file.type)}
+    response = requests.post(f"{API_URL}{endpoint}", files=files, params=params, timeout=60)
+    response.raise_for_status()
+    return response.json()
+
+
+def show_classification(result):
+    st.metric("Classe prédite", result["class"], f"Confiance : {result['confidence']:.1%}", delta_color="off")
+    probabilities = pd.DataFrame(
+        {"Classe": list(result["probabilities"]), "Probabilité": list(result["probabilities"].values())}
+    )
+    st.bar_chart(probabilities, x="Classe", y="Probabilité", horizontal=True)
 
 
 with st.sidebar:
@@ -50,4 +66,8 @@ with preview:
 
 with results:
     st.subheader(mode)
-    st.button("Analyser", type="primary", width="stretch")
+    if st.button("Analyser", type="primary", width="stretch"):
+        with st.spinner("Analyse en cours..."):
+            result = call_api(MODES[mode], uploaded)
+        if mode == "Classification":
+            show_classification(result)
