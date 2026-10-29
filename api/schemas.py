@@ -1,6 +1,10 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
+class ErrorResponse(BaseModel):
+    detail: str
+
+
 class HealthResponse(BaseModel):
     status: str
     models_loaded: dict[str, bool]
