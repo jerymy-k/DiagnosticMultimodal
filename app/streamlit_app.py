@@ -1,3 +1,4 @@
+import base64
 import os
 
 import pandas as pd
@@ -35,6 +36,24 @@ def show_classification(result):
     st.bar_chart(probabilities, x="Classe", y="Probabilité", horizontal=True)
 
 
+def show_detection(result):
+    if result["count"] == 0:
+        st.info("Aucune tumeur détectée avec ce seuil de confiance.")
+        return
+    if all(d["class"] == "No Tumor" for d in result["detections"]):
+        st.success("Aucune tumeur détectée : le modèle reconnaît un cerveau sain (No Tumor).")
+    st.image(base64.b64decode(result["annotated_image"]), caption="Image annotée", width="stretch")
+    st.metric("Détections", result["count"])
+    detections = pd.DataFrame(
+        [
+            {"Classe": d["class"], "Confiance": f"{d['confidence']:.1%}", "x1": d["bbox"][0], "y1": d["bbox"][1],
+             "x2": d["bbox"][2], "y2": d["bbox"][3]}
+            for d in result["detections"]
+        ]
+    )
+    st.dataframe(detections, hide_index=True, width="stretch")
+
+
 with st.sidebar:
     st.header("API")
     st.caption(API_URL)
@@ -53,6 +72,7 @@ st.title("🧠 Diagnostic Multimodal")
 st.write("Analyse d'IRM cérébrales : classification du type de tumeur et détection de sa localisation.")
 
 mode = st.radio("Mode", list(MODES), horizontal=True)
+conf = st.slider("Seuil de confiance", 0.05, 0.95, 0.25, 0.05) if mode == "Détection" else None
 uploaded = st.file_uploader("Image IRM", type=["jpg", "jpeg", "png"])
 
 if uploaded is None:
@@ -67,7 +87,10 @@ with preview:
 with results:
     st.subheader(mode)
     if st.button("Analyser", type="primary", width="stretch"):
+        params = {"conf": conf, "annotated": True} if mode == "Détection" else None
         with st.spinner("Analyse en cours..."):
-            result = call_api(MODES[mode], uploaded)
+            result = call_api(MODES[mode], uploaded, params)
         if mode == "Classification":
             show_classification(result)
+        else:
+            show_detection(result)
