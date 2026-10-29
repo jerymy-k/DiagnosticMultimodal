@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import requests
 import streamlit as st
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 MODES = {"Classification": "/predict/classification", "Détection": "/predict/detection"}
@@ -21,10 +21,36 @@ def api_health():
         return None
 
 
+ERROR_MESSAGES = {
+    400: "L'image est corrompue ou illisible. Essayez avec un autre fichier.",
+    415: "Format de fichier non supporté. Utilisez une image JPEG ou PNG.",
+    422: "Paramètres de la requête invalides.",
+    503: "Le modèle n'est pas disponible sur l'API. Vérifiez son état dans la barre latérale.",
+    500: "Erreur interne de l'API. Réessayez plus tard.",
+}
+
+
+class ApiError(Exception):
+    pass
+
+
 def call_api(endpoint, file, params=None):
     files = {"file": (file.name, file.getvalue(), file.type)}
-    response = requests.post(f"{API_URL}{endpoint}", files=files, params=params, timeout=60)
-    response.raise_for_status()
+    try:
+        response = requests.post(f"{API_URL}{endpoint}", files=files, params=params, timeout=60)
+    except requests.ConnectionError:
+        raise ApiError(f"API injoignable ({API_URL}). Vérifiez qu'elle est démarrée.")
+    except requests.Timeout:
+        raise ApiError("L'API met trop de temps à répondre. Réessayez dans quelques instants.")
+    except requests.RequestException:
+        raise ApiError("Erreur de communication avec l'API.")
+    if response.status_code != 200:
+        message = ERROR_MESSAGES.get(response.status_code, f"Erreur inattendue de l'API (code {response.status_code}).")
+        try:
+            detail = response.json().get("detail")
+        except ValueError:
+            detail = None
+        raise ApiError(f"{message}\n\nDétail : {detail}" if isinstance(detail, str) else message)
     return response.json()
 
 
@@ -82,14 +108,21 @@ if uploaded is None:
 preview, results = st.columns(2)
 with preview:
     st.subheader("Image")
-    st.image(Image.open(uploaded), width="stretch")
+    try:
+        st.image(Image.open(uploaded), width="stretch")
+    except (UnidentifiedImageError, OSError):
+        st.warning("Aperçu impossible : le fichier ne semble pas être une image valide.")
 
 with results:
     st.subheader(mode)
     if st.button("Analyser", type="primary", width="stretch"):
         params = {"conf": conf, "annotated": True} if mode == "Détection" else None
-        with st.spinner("Analyse en cours..."):
-            result = call_api(MODES[mode], uploaded, params)
+        try:
+            with st.spinner("Analyse en cours..."):
+                result = call_api(MODES[mode], uploaded, params)
+        except ApiError as error:
+            st.error(str(error))
+            st.stop()
         if mode == "Classification":
             show_classification(result)
         else:
