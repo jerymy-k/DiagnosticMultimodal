@@ -1,0 +1,21 @@
+experiment: brain-tumor-classification
+backbone: InceptionV3
+img_size: 299
+batch_size: 32
+seed: 42
+dropout: 0.3
+loss: sparse_categorical_crossentropy
+
+feature_extraction:
+  learning_rate: 0.001
+  max_epochs: 15
+  patience: 3
+
+fine_tuning:
+  learning_rate: 0.00001
+  max_epochs: 10
+  patience: 3
+  blocks: [mixed9, mixed8]
+
+quick:
+  max_epochs: 1

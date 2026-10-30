@@ -1,0 +1,9 @@
+staging_dir: models/staging
+models_dir: models
+
+detection:
+  experiment: brain-tumor-detection
+  candidates: [yolov8n.pt, yolov8s.pt]
+  runs_dir: runs/pipeline
+  quick:
+    epochs: 1
