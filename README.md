@@ -192,6 +192,21 @@ Les deux runs utilisent la même configuration (`config/detection.yaml` : 50 epo
 - Sur le test : precision 0.931, recall 0.906, mAP@0.5 0.944, mAP@0.5:0.95 0.732.
 - Erreurs principales : faux positifs sur *Glioma* (bords irréguliers, difficiles à encadrer) et boîtes mal ajustées sur *Pituitary* (tumeurs petites).
 
+### Exécution de bout en bout du DAG
+
+Run complet `brain_tumor_pipeline` (30/10, mode normal) : les 6 tâches en succès du premier coup, en 47 min.
+
+| Tâche | Durée | Résultat |
+|---|---|---|
+| `check_and_prepare_datasets` | 4 s | `processed/` déjà présent, étape ignorée |
+| `validate_data` | 5 s | données valides |
+| `train_classifier` | 10.5 min | FT `mixed8` retenu (F1 val 0.955 ; FT `mixed9` 0.953 ; FE 0.906) |
+| `train_detector` | 36 min | YOLOv8s retenu (mAP@0.5:0.95 val 0.776 ; YOLOv8n 0.771) |
+| `evaluate_and_log_mlflow` | 28 s | classifieur F1 test 0.956 ; détecteur mAP@0.5:0.95 test 0.732 |
+| `save_models_and_artifacts` | 5 s | aucun modèle promu : ils ne battent pas les champions (F1 0.956 ≤ 0.961 ; mAP 0.732 ≤ 0.732) |
+
+Les résultats sont reproductibles (YOLOv8s retrouve exactement le même mAP de test). Le classifieur varie légèrement d'un entraînement à l'autre (non-déterminisme du GPU), et la règle de promotion garde le meilleur.
+
 ## Choix techniques
 
 ### Données
